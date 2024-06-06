@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spyro Gem Collector</title>
+    <link rel="stylesheet" href="rhynoc.css">
+</head>
+<body>
+<h1><img src="img/title.png" alt="Spyro Gem Collector"></h1>
+<div id="game-container">
+    <div id="board" class="board"></div>
+    <div id="score-board">
+        <div id="score">Score: 0</div>
+        <div id="gem-count">Gems: 0</div>
+        <div id="red-gem-count">Red Gems: 0</div>
+        <div id="gold-gem-count">Gold Gems: 0</div>
+    </div>
+</div>
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <h2>Welcome to Spyro Gem Collector!</h2>
+        <p>Click 'Start' to begin the game.</p>
+        <button onclick="startGame()">Start</button>
+    </div>
+</div>
+<script src="rhynoc.js"></script>
+</body>
+</html>

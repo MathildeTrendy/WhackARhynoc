@@ -1,0 +1,138 @@
+/* Global Styles */
+body {
+    font-family: Magic English, sans-serif;
+    text-align: center;
+    background-size: cover;
+    background: url("img/background.png") 0% 40%;
+}
+
+h1 img {
+    width: 600px; /* Adjust the width as needed */
+    height: auto; /* Automatically adjust the height to maintain aspect ratio */
+}
+
+#game-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin-top: 40px;
+}
+
+#board {
+    width: 459px;
+    height: 459px;
+    display: flex;
+    flex-wrap: wrap;
+    background: #7a53bb;
+    background-size: cover;
+    border: 3px solid #5f3e8f;
+    margin-right: 50px;
+}
+
+#board div {
+    /* board = 540 x 540, divide into 3x3 tiles --> 180 x 180 per div */
+    width: 153px; /* 85% of 180px */
+    height: 153px; /* 85% of 180px */
+    background-image: url("img/portal.png");
+    background-size: 80%; /* Adjust the percentage as needed to make the portal smaller */
+    background-repeat: no-repeat; /* Make sure the background image is not repeated */
+    background-position: center; /* Center the background image within the div */
+}
+
+#board div img.sparx {
+    width: 102px; /* 85% of 120px */
+    height: 76.5px; /* 85% of 90px */
+    margin-top: 17px; /* Adjusted to maintain the relative position */
+}
+
+#board div img.baby {
+    width: 102px; /* 85% of 120px */
+    height: 76.5px; /* 85% of 90px */
+    margin-top: 17px; /* Adjusted to maintain the relative position */
+}
+
+#board div img.rhynoc {
+    width: 85px; /* 85% of 100px */
+    height: 85px; /* 85% of 100px */
+    margin-top: 9px; /* Adjusted to maintain the relative position */
+    margin-left: -17px; /* Adjusted to maintain the relative position */
+}
+
+#board div img.gem,
+#board div img.redGem,
+#board div img.goldGem {
+    width: 85px; /* Adjust the width as needed */
+    height: 65px; /* Adjust the height as needed */
+    margin-top: 20px; /* Adjust the top margin as needed */
+    margin-left: -3px; /* Adjust the left margin as needed */
+}
+
+#score {
+    font-size: 40px; /* Change the font size to 40 pixels */
+    margin-top: -40px;
+    -webkit-text-fill-color: #ffb700; /* Hide the text fill color */
+    -webkit-text-stroke: 1px rebeccapurple; /* Add a 2px blue outline */
+}
+
+#score-board {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: 20px;
+    color: #ffb700;
+    -webkit-text-stroke: 1px rebeccapurple; /* Add stroke to the text */
+}
+
+#score-board div {
+    margin: 10px 0;
+}
+
+/* Style the modal */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Enable scroll if needed */
+    background: url("img/night.png") 50% 50%;
+    background-size: cover; /* Zoom the background picture to cover the entire modal */
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: #7a53bb;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 5px solid #5f3e8f;
+    width: 30%; /* Adjust the width as needed */
+    color: #ffb700;
+    -webkit-text-stroke: 1px #000000;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Start Button */
+.modal-content button {
+    background-color: #057905; /* Background color */
+    color: #ffffff; /* Text color */
+    border: 1px solid black; /* Add black border */
+    padding: 10px 20px; /* Add padding */
+    font-family: 'Magic English', sans-serif; /* Use the same font family */
+    font-size: 20px; /* Adjust font size */
+    cursor: pointer; /* Add pointer cursor */
+    transition: background-color 0.3s ease; /* Smooth transition for background color */
+}
+
+/* Button hover effect */
+.modal-content button:hover {
+    background-color: #ffd633; /* Change background color on hover */
+}
+
