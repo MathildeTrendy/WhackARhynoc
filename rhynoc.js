@@ -1,30 +1,29 @@
-let currRhynocTile;
-let currSparxTile;
-let currBabyTile;
-let currGemTile;
-let currGoldGemTile;
-let currRedGemTile;
+let rhynocPosition;
+let sparxPosition;
+let babyPosition;
+let greenGemPosition;
+let goldGemPosition;
+let redGemPosition;
 let score = 0;
 let gameOver = false;
-let rhynocInterval = 1000; // Initial interval for Rhynoc movement
-let friendsInterval = 1000; // Initial interval for friends movement
-let gemInterval = 5000; // Initial interval for gem
-let gemIntervals = {
-    gem: 5000,     // Interval for regular gems
-    redGem: 6000,  // Interval for red gems
-    goldGem: 7000  // Interval for gold gems
+let rhynocSpeed = 1000;
+let friendsSpeed = 1000;
+let gemSpeed = {
+    greenGem: 5000,
+    redGem: 6000,
+    goldGem: 7000
 };
 
 
-// Counters for each type of gem
+// Start count
 let goldGemCounter = 0;
-let gemCounter = 0;
+let greenGemCounter = 0;
 let redGemCounter = 0;
 
 let gemClickCounts = {};
 
 window.onload = function() {
-    document.getElementById('myModal').style.display = "block"; // Display the modal when the window loads
+    document.getElementById('myModal').style.display = "block";
 };
 
 function startGame() {
@@ -33,36 +32,30 @@ function startGame() {
 }
 
 function setGame() {
-    // Create an array of tile positions
-    let tilePositions = [];
+    let portalPositions = [];
     for (let i = 0; i < 9; i++) {
-        tilePositions.push(i);
+        portalPositions.push(i);
     }
 
-    // Sort the tile positions using Merge Sort (algorithm) based on gem type
-    mergeSort(tilePositions, compareGemTypes);
+    mergeSort(portalPositions, compareGemTypes);
 
-    // Set up the grid in HTML using the sorted tile positions
     for (let i = 0; i < 9; i++) {
-        let tile = document.createElement("div");
-        tile.id = tilePositions[i].toString();
-        tile.addEventListener("click", selectTile);
-        document.getElementById("board").appendChild(tile);
+        let portal = document.createElement("div");
+        portal.id = portalPositions[i].toString();
+        portal.addEventListener("click", selectPortal);
+        document.getElementById("board").appendChild(portal);
     }
-    // Set the initial rhynoc without delay
+
     setRhynoc();
 
-    // Set intervals for Rhynoc, Sparx, Baby, and gem
-    setInterval(setRhynoc, rhynocInterval);
-    setInterval(setSparx, friendsInterval);
-    setInterval(setBaby, friendsInterval);
-    // Set intervals for gem generation
-    setInterval(() => setGenericGem('gem'), gemIntervals.gem);
-    setInterval(() => setGenericGem('redGem'), gemIntervals.redGem);
-    setInterval(() => setGenericGem('goldGem'), gemIntervals.goldGem);
+    setInterval(setRhynoc, rhynocSpeed);
+    setInterval(setSparx, friendsSpeed);
+    setInterval(setBaby, friendsSpeed);
+    setInterval(() => setGenericGems('greenGem'), gemSpeed.greenGem);
+    setInterval(() => setGenericGems('redGem'), gemSpeed.redGem);
+    setInterval(() => setGenericGems('goldGem'), gemSpeed.goldGem);
 }
 
-// Merge Sort algorithm to sort tile positions based on gem type
 function mergeSort(arr, compareFunc) {
     if (arr.length <= 1) {
         return arr;
@@ -89,43 +82,42 @@ function merge(left, right, compareFunc) {
     return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex));
 }
 
-// Comparator function to compare gem types
-function compareGemTypes(tilePos1, tilePos2) {
+
+function compareGemTypes(portalPos1, portalPos2) {
     // Extract gem type from tile position
-    let gemType1 = getGemType(tilePos1);
-    let gemType2 = getGemType(tilePos2);
-    // Assign numerical values to gem types for sorting
-    let gemTypeOrder = { "gem": 1, "redGem": 2, "goldGem": 3 };
+    let gemType1 = getGemType(portalPos1);
+    let gemType2 = getGemType(portalPos2);
+    let gemTypeOrder = { "greenGem": 1, "redGem": 2, "goldGem": 3 };
     return gemTypeOrder[gemType1] - gemTypeOrder[gemType2];
 }
 
-// Function to get gem type from tile position
-function getGemType(tilePos) {
-    // Check if the tile position matches any of the gem types
-    if (tilePos === currGemTile?.id) {
-        return "gem";
-    } else if (tilePos === currRedGemTile?.id) {
+
+function getGemType(portalPos) {
+    if (portalPos === greenGemPosition?.id) {
+        return "greenGem";
+    } else if (portalPos === redGemPosition?.id) {
         return "redGem";
-    } else if (tilePos === currGoldGemTile?.id) {
+    } else if (portalPos === goldGemPosition?.id) {
         return "goldGem";
     }
-    return ""; // Default case if no match is found
+    return "";
 }
 
-function getRandomTile() {
-    let availableTiles = []; // Array to store available tile positions
+function getRandomPortal() {
+    let availablePortals = [];
     for (let i = 0; i < 9; i++) {
-        let tile = document.getElementById(i.toString());
-        // Check if the tile does not contain any elements
-        if (!tile.querySelector('.rhynoc') && !tile.querySelector('.sparx') && !tile.querySelector('.baby') && !tile.querySelector('.gem') && !tile.querySelector('.redGem') && !tile.querySelector('.goldGem')) {
-            availableTiles.push(i.toString()); // Add the tile position to availableTiles array
+        let portal = document.getElementById(i.toString());
+        // Check if the portal does not contain any elements
+        if (!portal.querySelector('.rhynoc') && !portal.querySelector('.sparx')
+            && !portal.querySelector('.baby') && !portal.querySelector('.greenGem') &&
+            !portal.querySelector('.redGem') && !portal.querySelector('.goldGem')) {
+            availablePortals.push(i.toString()); // Add the portal position to availablePortals array
         }
     }
-    // If there are available tiles, return a random tile position from the availableTiles array
-    if (availableTiles.length > 0) {
-        return availableTiles[Math.floor(Math.random() * availableTiles.length)];
+    if (availablePortals.length > 0) {
+        return availablePortals[Math.floor(Math.random() * availablePortals.length)];
     } else {
-        return null; // Return null if there are no available tiles
+        return null;
     }
 }
 
@@ -134,216 +126,211 @@ function setRhynoc() {
     if (gameOver) {
         return;
     }
-    if (currRhynocTile) {
-        currRhynocTile.innerHTML = "";
+    if (rhynocPosition) {
+        rhynocPosition.innerHTML = "";
     }
     let rhynoc = document.createElement("img");
     rhynoc.src = "./img/rhynoc.png";
     rhynoc.classList.add("rhynoc");
 
-    let num = getRandomTile();
-    // Check for duplication with sparx, baby, and gems
-    while (currSparxTile && currSparxTile.id === num ||
-    currBabyTile && currBabyTile.id === num ||
-    (currGemTile && currGemTile.id === num) ||
-    (currRedGemTile && currRedGemTile.id === num) ||
-    (currGoldGemTile && currGoldGemTile.id === num)) {
-        num = getRandomTile();
+    let num = getRandomPortal();
+
+    while (sparxPosition && sparxPosition.id === num ||
+    babyPosition && babyPosition.id === num ||
+    (greenGemPosition && greenGemPosition.id === num) ||
+    (redGemPosition && redGemPosition.id === num) ||
+    (goldGemPosition && goldGemPosition.id === num)) {
+        num = getRandomPortal();
     }
-    currRhynocTile = document.getElementById(num);
-    currRhynocTile.appendChild(rhynoc);
+    rhynocPosition = document.getElementById(num);
+    rhynocPosition.appendChild(rhynoc);
 }
 
 function setSparx() {
     if (gameOver) {
         return;
     }
-    if (currSparxTile) {
-        currSparxTile.innerHTML = "";
+    if (sparxPosition) {
+        sparxPosition.innerHTML = "";
     }
     let sparx = document.createElement("img");
     sparx.src = "./img/sparx.png";
     sparx.classList.add("sparx");
 
-    let num = getRandomTile();
-    // Check for duplication with rhynoc, baby, and gems
-    while (currRhynocTile && currRhynocTile.id === num ||
-    currBabyTile && currBabyTile.id === num ||
-    (currGemTile && currGemTile.id === num) ||
-    (currRedGemTile && currRedGemTile.id === num) ||
-    (currGoldGemTile && currGoldGemTile.id === num)) {
-        num = getRandomTile();
+    let num = getRandomPortal();
+
+    while (rhynocPosition && rhynocPosition.id === num ||
+    babyPosition && babyPosition.id === num ||
+    (greenGemPosition && greenGemPosition.id === num) ||
+    (redGemPosition && redGemPosition.id === num) ||
+    (goldGemPosition && goldGemPosition.id === num)) {
+        num = getRandomPortal();
     }
-    currSparxTile = document.getElementById(num);
-    currSparxTile.appendChild(sparx);
+    sparxPosition = document.getElementById(num);
+    sparxPosition.appendChild(sparx);
 }
 
 function setBaby() {
     if (gameOver) {
         return;
     }
-    if (currBabyTile) {
-        currBabyTile.innerHTML = "";
+    if (babyPosition) {
+        babyPosition.innerHTML = "";
     }
     let baby = document.createElement("img");
     baby.src = "./img/baby.png";
     baby.classList.add("baby");
 
-    let num = getRandomTile();
-    // Check for duplication with rhynoc, sparx, and gems
-    while (currRhynocTile && currRhynocTile.id === num ||
-    currSparxTile && currSparxTile.id === num ||
-    (currGemTile && currGemTile.id === num) ||
-    (currRedGemTile && currRedGemTile.id === num) ||
-    (currGoldGemTile && currGoldGemTile.id === num)) {
-        num = getRandomTile();
+    let num = getRandomPortal();
+
+    while (rhynocPosition && rhynocPosition.id === num ||
+    sparxPosition && sparxPosition.id === num ||
+    (greenGemPosition && greenGemPosition.id === num) ||
+    (redGemPosition && redGemPosition.id === num) ||
+    (goldGemPosition && goldGemPosition.id === num)) {
+        num = getRandomPortal();
     }
-    currBabyTile = document.getElementById(num);
-    currBabyTile.appendChild(baby);
+    babyPosition = document.getElementById(num);
+    babyPosition.appendChild(baby);
 }
 
-// Function to set generic gem (gem, redGem, goldGem)
-// Function to set generic gem (gem, redGem, goldGem)
-function setGenericGem(gemType) {
+function setGenericGems(gemType) {
     if (gameOver) {
         return;
     }
 
-    // Clear the current tile of the specified gem type
-    if (gemType === "gem" && currGemTile) {
-        currGemTile.innerHTML = "";
-    } else if (gemType === "redGem" && currRedGemTile) {
-        currRedGemTile.innerHTML = "";
-    } else if (gemType === "goldGem" && currGoldGemTile) {
-        currGoldGemTile.innerHTML = "";
+    if (gemType === "greenGem" && greenGemPosition) {
+        greenGemPosition.innerHTML = "";
+    } else if (gemType === "redGem" && redGemPosition) {
+        redGemPosition.innerHTML = "";
+    } else if (gemType === "goldGem" && goldGemPosition) {
+        goldGemPosition.innerHTML = "";
     }
 
-    // Delay the appearance of the gold gem
     if (gemType === "goldGem") {
         setTimeout(() => {
             let gem = document.createElement("img");
-            gem.src = `./img/${gemType}.png`; // Use the gemType to set the image source
+            gem.src = `./img/${gemType}.png`;
             gem.classList.add(gemType);
 
-            let num = getRandomTile(); // Get a random tile
+            let num = getRandomPortal();
 
-            let tile = document.getElementById(num);
-            tile.appendChild(gem);
+            let portal = document.getElementById(num);
+            portal.appendChild(gem);
 
-            // Set the current tile variable based on gem type
-            currGoldGemTile = tile;
-        }, 3000); // Delay gold gem appearance by 3 seconds
+            goldGemPosition = portal;
+        }, 3000);
     } else {
-        // For other gem types, display immediately
         let gem = document.createElement("img");
-        gem.src = `./img/${gemType}.png`; // Use the gemType to set the image source
+        gem.src = `./img/${gemType}.png`;
         gem.classList.add(gemType);
 
-        let num = getRandomTile(); // Get a random tile
+        let num = getRandomPortal();
 
-        let tile = document.getElementById(num);
-        tile.appendChild(gem);
+        let portal = document.getElementById(num);
+        portal.appendChild(gem);
 
-        // Set the current tile variable based on gem type
-        if (gemType === "gem") {
-            currGemTile = tile;
+        if (gemType === "greenGem") {
+            greenGemPosition = portal;
         } else if (gemType === "redGem") {
-            currRedGemTile = tile;
+            redGemPosition = portal;
         }
     }
 }
 
+let lastGemsCollected = [];
 
-
-
-function selectTile() {
+function selectPortal() {
     if (gameOver) {
         return;
     }
 
-    // Check if the clicked tile contains a gem
-    if (this === currGemTile && currGemTile) {
+    if (this === greenGemPosition && greenGemPosition) {
         score += 2;
-        gemCounter++;
-        currGemTile.innerHTML = ""; // Clear gem tile after collecting it
-        currGemTile = null;
-        gemClickCounts.gem++; // Increment gem click count
-
-        // Check if the condition for adding 50 points is met
-        if (checkGemOrderForBonus()) {
-            score += 50;
-            updateScore(); // Update the score display after adding 50 points
-        }
-    } else if (this === currRedGemTile && currRedGemTile) {
+        greenGemCounter++;
+        greenGemPosition.innerHTML = "";
+        greenGemPosition = null;
+        gemClickCounts.greenGem++;
+    } else if (this === redGemPosition && redGemPosition) {
         score += 3;
         redGemCounter++;
-        currRedGemTile.innerHTML = ""; // Clear red gem tile
-        currRedGemTile = null;
-        gemClickCounts.redGem++; // Increment red gem click count
-    } else if (this === currGoldGemTile && currGoldGemTile && currGoldGemTile.querySelector('.goldGem')) {
+        redGemPosition.innerHTML = "";
+        redGemPosition = null;
+        gemClickCounts.redGem++;
+    } else if (this === goldGemPosition && goldGemPosition && goldGemPosition.querySelector('.goldGem')) {
         score += 4;
         goldGemCounter++;
-        currGoldGemTile.innerHTML = ""; // Clear gold gem tile after collecting it
-        currGoldGemTile = null;
-        gemClickCounts.goldGem++; // Increment gold gem click count
-    } else if (this === currRhynocTile && currRhynocTile) {
-        score += 10; // Add 10 points when Rhynoc is hit
-    } else if (this === currSparxTile && currSparxTile) {
-        // Remove one gem from the list when Sparx is hit
-        removeGemFromList();
-        this.innerHTML = ""; // Clear the clicked tile
-    } else if (this === currBabyTile && currBabyTile) {
-        // End the game when Baby is hit
+        goldGemPosition.innerHTML = "";
+        goldGemPosition = null;
+        gemClickCounts.goldGem++;
+    } else if (this === rhynocPosition && rhynocPosition) {
+        score += 10;
+    } else if (this === sparxPosition && sparxPosition) {
+        removeRandomGem();
+    } else if (this === babyPosition && babyPosition) {
         gameOver = true;
-        alert("Game Over!");
+        let totalGems = greenGemCounter + redGemCounter + goldGemCounter;
+        let message = `Game Over!\nTotal Score: ${score}\nTotal Gems: ${totalGems}`;
+        displayGameOverModal(message);
         return;
     } else {
-        // If the clicked tile doesn't contain a gem or enemy, do nothing
         return;
     }
-
-    updateScore(); // Update the score display
-    updateGemCounts(); // Update gem counts after each click
-}
-
-
-function checkGemOrderForBonus() {
-    // Check if the player has collected a red gem, followed by a gold gem, and then a regular gem in this order
-    return redGemCounter >= 1 && goldGemCounter >= 1 && gemCounter >= 1;
-}
-
-function removeGemFromList() {
-    // Determine which gem type to remove based on the gem counters
-    let gemToRemove;
-    if (redGemCounter > 0) {
-        gemToRemove = 'redGem';
-    } else if (goldGemCounter > 0) {
-        gemToRemove = 'goldGem';
-    } else if (gemCounter > 0) {
-        gemToRemove = 'gem';
-    } else {
-        return; // No gem to remove
+    if (this === greenGemPosition && lastGemsCollected.length === 2 && lastGemsCollected[0] === "redGem" && lastGemsCollected[1] === "goldGem") {
+        score += 50;
     }
 
-    // Decrement the corresponding gem counter
-    switch (gemToRemove) {
-        case 'redGem':
-            redGemCounter--;
-            break;
-        case 'goldGem':
-            goldGemCounter--;
-            break;
-        case 'gem':
-            gemCounter--;
-            break;
+    lastGemsCollected.push(getGemType(this));
+    if (lastGemsCollected.length > 2) {
+        lastGemsCollected.shift();
     }
 
-    // Update the gem counts display
+    this.innerHTML = "";
+    updateScore();
     updateGemCounts();
 }
 
 
 
+
+function removeRandomGem() {
+    let randomNumber = Math.random();
+    let removedGemType;
+
+    if (randomNumber < 0.33 && greenGemCounter > 0) {
+        removedGemType = 'greenGem';
+        greenGemCounter--;
+    } else if (randomNumber < 0.66 && redGemCounter > 0) {
+        removedGemType = 'redGem';
+        redGemCounter--;
+    } else if (goldGemCounter > 0) {
+        removedGemType = 'goldGem';
+        goldGemCounter--;
+    } else {
+        return;
+    }
+
+    let portalToRemoveGem = getRandomPortalWithGemType(removedGemType);
+    if (portalToRemoveGem) {
+        portalToRemoveGem.innerHTML = "";
+    }
+}
+
+function getRandomPortalWithGemType(gemType) {
+    let portalWithGem = [];
+
+    for (let i = 0; i < 9; i++) {
+        let portal = document.getElementById(i.toString());
+        if (portal.querySelector(`.${gemType}`)) {
+            portalWithGem.push(portal);
+        }
+    }
+    if (portalWithGem.length > 0) {
+        return portalWithGem[Math.floor(Math.random() * portalWithGem.length)];
+    } else {
+        return null;
+    }
+}
 
 function updateScore() {
     let scoreElement = document.getElementById("score");
@@ -353,25 +340,44 @@ function updateScore() {
 }
 
 function updateGemCounts() {
-    document.getElementById("gem-count").innerText = "Gems: " + gemCounter;
+    document.getElementById("green-gem-count").innerText = "Green Gems: " + greenGemCounter;
     document.getElementById("red-gem-count").innerText = "Red Gems: " + redGemCounter;
     document.getElementById("gold-gem-count").innerText = "Gold Gems: " + goldGemCounter;
 
-    // Display gem click counts
-    displayGemClickCounts(); // Call the function to display gem click counts
+    displayGemClickCounts();
 }
 
-// Function to display the gem click counts
 function displayGemClickCounts() {
     let gemClickList = document.getElementById("gem-click-list");
     if (gemClickList) {
-        gemClickList.innerHTML = ""; // Clear the list before updating
+        gemClickList.innerHTML = "";
         for (let gemType in gemClickCounts) {
             let listItem = document.createElement("li");
             listItem.textContent = `${gemType}: ${gemClickCounts[gemType]}`;
             gemClickList.appendChild(listItem);
         }
     }
+}
+
+function displayGameOverModal(message) {
+    let modal = document.createElement('div');
+    modal.classList.add('modal');
+    modal.innerHTML = `
+        <div class="modal-content">
+            <h2>${message}</h2>
+            <button id="retryButton">Retry</button>
+        </div>
+    `;
+    document.getElementById('game-container').appendChild(modal);
+
+
+    let retryButton = document.getElementById('retryButton');
+    retryButton.addEventListener('click', function() {
+        location.reload();
+    });
+
+
+    modal.style.display = "block";
 }
 
 
